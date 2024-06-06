@@ -3,4 +3,3 @@ spring:
     mongodb:
       uri: 'mongodb://pdp:123@localhost:27017'
       database: 'pdpspring'
-
