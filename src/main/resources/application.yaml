@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./db
+    username: sa
+    password: sa
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+
+comments:
+  base:
+    url: http://localhost:9595/api/comments
+    postComments: ${comments.base.url}/{0}/post
+    saveComments: ${comments.base.url}/saveAll
+
+
+logging:
+  level:
+    org.zalando.logbook: trace
+
+logbook:
+  exclude:
+    - /api/posts/comment
