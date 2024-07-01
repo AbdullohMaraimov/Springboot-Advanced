@@ -5,10 +5,8 @@ import lombok.RequiredArgsConstructor;
 import online.pdp.spring_advanced.post.Post;
 import online.pdp.spring_advanced.post.PostRepository;
 import online.pdp.spring_advanced.post.PostService;
-import online.pdp.spring_advanced.resourse.CommentResource;
-import org.springframework.http.ResponseEntity;
+import online.pdp.spring_advanced.resourse.CommentClient;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -18,7 +16,7 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
-    private final CommentResource commentResource;
+    private final CommentClient commentResource;
 
     @Override
     public PostDTO getPost(@NonNull Integer id) {
@@ -29,7 +27,7 @@ public class PostServiceImpl implements PostService {
                 .id(post.getId())
                 .body(post.getBody())
                 .title(post.getTitle())
-                .comments(commentResource.getAllComments(id))
+                .comments(commentResource.getAllCommentsByPostId(id))
                 .build();
     }
 
