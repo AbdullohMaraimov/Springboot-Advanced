@@ -13,11 +13,9 @@ spring:
         format_sql: true
 
 
-comments:
-  base:
-    url: http://localhost:9595/api/comments
-    postComments: ${comments.base.url}/{0}/post
-    saveComments: ${comments.base.url}/saveAll
+hateoas:
+  url:
+    base: http://localhost:9088/api/posts
 
 
 logging:

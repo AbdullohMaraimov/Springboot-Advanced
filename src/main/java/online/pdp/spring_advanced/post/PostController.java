@@ -23,14 +23,5 @@ public class PostController {
         return ResponseEntity.ok(postService.getPost(id));
     }
 
-    @PostMapping
-    public ResponseEntity<PostDTO> createPost(@RequestBody PostCreateDto dto) {
-        return ResponseEntity.ok(postService.createPost(dto));
-    }
-
-    @PostMapping("/comment")
-    public ResponseEntity<Void> createComments(@RequestBody List<CommentCreateDTO> dtos) {
-        return ResponseEntity.ok(postService.createComment(dtos));
-    }
 
 }

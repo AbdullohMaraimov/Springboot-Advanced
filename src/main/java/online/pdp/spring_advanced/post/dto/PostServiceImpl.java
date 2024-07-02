@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import online.pdp.spring_advanced.post.Post;
 import online.pdp.spring_advanced.post.PostRepository;
 import online.pdp.spring_advanced.post.PostService;
-import online.pdp.spring_advanced.resourse.CommentClient;
+import online.pdp.spring_advanced.resourse.CommentResource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
-    private final CommentClient commentResource;
+    private final CommentResource commentResource;
 
     @Override
     public PostDTO getPost(@NonNull Integer id) {
