@@ -1,15 +1,10 @@
 spring:
   datasource:
-    url: 'jdbc:postgresql://localhost:5432/migration?currentSchema=sb_flyway'
+    url: 'jdbc:postgresql://localhost:5432/migration?currentSchema=sb_liquibase'
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
 
-  flyway:
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
-    locations: classpath:db/migration
-    baseline-on-migrate: true
-    clean-disabled: true
-    user: postgres
-    password: postgres
-    baseline-version: 0
