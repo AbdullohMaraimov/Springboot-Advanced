@@ -2,40 +2,22 @@ package online.pdp.spring_advanced;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Entity
-@Table(name = "posts")
-public class Post {
+@Table(name = "jobs")
+public class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
-    private String description;
-
-    @ManyToOne
-    @JoinColumn(name = "authorId")
-    private Author author;
-
+    private Long minSalary;
+    private Long maxSalary;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
