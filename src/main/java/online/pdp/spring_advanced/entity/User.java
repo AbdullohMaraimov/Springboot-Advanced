@@ -3,6 +3,8 @@ package online.pdp.spring_advanced.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,8 +17,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String email;
-    private String username;
-    private String password;
-    private String otp;
+    private String name;
+    private Integer age;
+    private Instant createdAt;
+    private Instant updatedAt;
 }

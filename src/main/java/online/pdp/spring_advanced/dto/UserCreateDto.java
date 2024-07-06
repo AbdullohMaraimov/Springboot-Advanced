@@ -10,7 +10,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserCreateDto implements Serializable {
-    private String email;
-    private String username;
-    private String password;
+    private String name;
+    private Integer age;
 }
