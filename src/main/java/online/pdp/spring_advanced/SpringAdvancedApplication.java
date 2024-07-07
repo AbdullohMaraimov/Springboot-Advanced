@@ -37,4 +37,11 @@ public class SpringAdvancedApplication {
 		});
 	}
 
+	@Bean
+	public CacheManager cacheManager() {
+		ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
+		cacheManager.setCacheNames(List.of("posts", "users", "comments"));
+		return cacheManager;
+	}
+
 }

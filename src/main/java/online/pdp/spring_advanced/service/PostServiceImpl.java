@@ -6,18 +6,25 @@ import online.pdp.spring_advanced.dto.PostCreateDto;
 import online.pdp.spring_advanced.dto.PostUpdateDto;
 import online.pdp.spring_advanced.entity.Post;
 import online.pdp.spring_advanced.repository.PostRepository;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final CacheManager cacheManager;
+    private final Cache cache;
 
-    private final ConcurrentHashMap<Integer, Post> postCache = new ConcurrentHashMap<>();
+    public PostServiceImpl(PostRepository postRepository, CacheManager cacheManager) {
+        this.postRepository = postRepository;
+        this.cacheManager = cacheManager;
+        this.cache = cacheManager.getCache("posts");
+    }
 
     @Override
     @Transactional
@@ -28,7 +35,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post findById(Integer id) throws InterruptedException {
 
-        Post cashedPost = postCache.get(id);
+        Post cashedPost = cache.get(id, Post.class);
         if (cashedPost != null) {
             return cashedPost;
         }
@@ -37,7 +44,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("Post with not found"));
         TimeUnit.SECONDS.sleep(2);
 
-        postCache.put(id, post);
+        cache.put(id, post);
 
         return post;
     }
@@ -45,7 +52,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void delete(Integer id) {
         postRepository.deleteById(id);
-        postCache.remove(id);
+        cache.evict(id);
     }
 
     @Override
@@ -58,6 +65,6 @@ public class PostServiceImpl implements PostService {
         post.setTitle(dto.getTitle());
         postRepository.save(post);
 
-        postCache.put(dto.getId(), post);
+        cache.put(dto.getId(), post);
     }
 }
