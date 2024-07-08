@@ -27,7 +27,7 @@ public class SpringAdvancedApplication {
 	}
 
 	@Bean
-	public Caffeine caffeineConfig() {
+	public Caffeine<Object, Object> caffeineConfig() {
 		return Caffeine.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES);
 	}
 
