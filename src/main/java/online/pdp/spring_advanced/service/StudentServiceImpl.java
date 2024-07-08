@@ -47,7 +47,7 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     @CachePut(value = "students", key = "#dto.id")
-    public void update(StudentUpdateDto dto) {
+    public Student update(StudentUpdateDto dto) {
         Student student = studentRepository.findById(dto.getId())
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
@@ -55,5 +55,6 @@ public class StudentServiceImpl implements StudentService{
         student.setAge(dto.getAge());
 
         studentRepository.save(student);
+        return student;
     }
 }

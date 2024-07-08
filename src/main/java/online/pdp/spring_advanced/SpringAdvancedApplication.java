@@ -23,7 +23,7 @@ public class SpringAdvancedApplication {
 	}
 
 	@Scheduled(initialDelay = 10, fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
-	@CacheEvict("students")
+	@CacheEvict(value = "students", allEntries = true)
 	public void deleteAllCaches() {
 		log.info("----------------All caches are flushed ------------");
 	}
