@@ -36,7 +36,7 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public Student findById(Long id) throws InterruptedException {
 
-        Student cashedStudent = cache.get(id);
+        Student cashedStudent = cache.get(id, Student.class);
         if (cashedStudent != null) {
             return cashedStudent;
         }
@@ -54,13 +54,13 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public void delete(Long id) {
         studentRepository.deleteById(id);
-        cache.remove(id);
+        cache.evict(id);
     }
 
     @Override
     public void update(StudentUpdateDto dto) {
 
-        Student cashedStudent = cache.get(dto.getId());
+        Student cashedStudent = cache.get(dto.getId(), Student.class);
         if (cashedStudent != null) {
             cashedStudent.setName(dto.getName());
             cashedStudent.setAge(dto.getAge());
