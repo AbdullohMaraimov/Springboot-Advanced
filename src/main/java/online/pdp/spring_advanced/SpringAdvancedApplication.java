@@ -1,10 +1,14 @@
 package online.pdp.spring_advanced;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,10 +26,23 @@ public class SpringAdvancedApplication {
 		SpringApplication.run(SpringAdvancedApplication.class, args);
 	}
 
-	@Scheduled(initialDelay = 10, fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
-	@CacheEvict(value = "students", allEntries = true)
-	public void deleteAllCaches() {
-		log.info("----------------All caches are flushed ------------");
+	@Bean
+	public Caffeine caffeineConfig() {
+		return Caffeine.newBuilder().expireAfterWrite(60, TimeUnit.MINUTES);
 	}
+
+	@Bean
+	public CacheManager cacheManager(Caffeine caffeine) {
+		CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
+		caffeineCacheManager.setCaffeine(caffeine);
+		return caffeineCacheManager;
+	}
+
+//	@Scheduled(initialDelay = 10, fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+//	@CacheEvict(value = "students", allEntries = true)
+//	public void deleteAllCaches() {
+//		log.info("----------------All caches are flushed ------------");
+//	}
+
 
 }
