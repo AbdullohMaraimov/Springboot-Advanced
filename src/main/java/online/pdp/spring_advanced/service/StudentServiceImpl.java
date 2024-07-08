@@ -1,28 +1,22 @@
 package online.pdp.spring_advanced.service;
 
+import lombok.RequiredArgsConstructor;
 import online.pdp.spring_advanced.dto.StudentRequestDto;
 import online.pdp.spring_advanced.dto.StudentUpdateDto;
 import online.pdp.spring_advanced.entity.Student;
 import online.pdp.spring_advanced.repository.StudentRepository;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
 @Service
+@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService{
 
     private final StudentRepository studentRepository;
-    private final CacheManager cacheManager;
-    private final Cache cache;
-
-
-    public StudentServiceImpl(StudentRepository studentRepository, CacheManager cacheManager) {
-        this.studentRepository = studentRepository;
-        this.cacheManager = cacheManager;
-        this.cache = cacheManager.getCache("students");
-    }
 
     @Override
     public Student create(StudentRequestDto dto) {
@@ -34,40 +28,26 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
+    @Cacheable(value = "students", key = "#id")
     public Student findById(Long id) throws InterruptedException {
-
-        Student cashedStudent = cache.get(id, Student.class);
-        if (cashedStudent != null) {
-            return cashedStudent;
-        }
 
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         TimeUnit.SECONDS.sleep(2);
 
-        cache.put(id, student);
-
         return student;
     }
 
     @Override
+    @CacheEvict(value = "students", key = "#id")
     public void delete(Long id) {
         studentRepository.deleteById(id);
-        cache.evict(id);
     }
 
     @Override
+    @CachePut(value = "students", key = "#dto.id")
     public void update(StudentUpdateDto dto) {
-
-        Student cashedStudent = cache.get(dto.getId(), Student.class);
-        if (cashedStudent != null) {
-            cashedStudent.setName(dto.getName());
-            cashedStudent.setAge(dto.getAge());
-            studentRepository.save(cashedStudent);
-            cache.put(cashedStudent.getId(), cashedStudent);
-        }
-
         Student student = studentRepository.findById(dto.getId())
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 

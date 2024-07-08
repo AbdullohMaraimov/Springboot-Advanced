@@ -1,29 +1,31 @@
 package online.pdp.spring_advanced;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @EnableAsync
 @EnableCaching
+@EnableScheduling
+@Slf4j
 public class SpringAdvancedApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringAdvancedApplication.class, args);
 	}
 
-	@Bean
-	public CacheManager cacheManager() {
-		ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
-		cacheManager.setCacheNames(List.of("students"));
-		return cacheManager;
+	@Scheduled(initialDelay = 10, fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+	@CacheEvict("students")
+	public void deleteAllCaches() {
+		log.info("----------------All caches are flushed ------------");
 	}
 
 }
