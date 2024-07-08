@@ -1,21 +1,28 @@
 package online.pdp.spring_advanced.service;
 
-import lombok.RequiredArgsConstructor;
 import online.pdp.spring_advanced.dto.StudentRequestDto;
 import online.pdp.spring_advanced.dto.StudentUpdateDto;
 import online.pdp.spring_advanced.entity.Student;
 import online.pdp.spring_advanced.repository.StudentRepository;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService{
 
     private final StudentRepository studentRepository;
-    private final ConcurrentHashMap<Long, Student> studentCache = new ConcurrentHashMap<>();
+    private final CacheManager cacheManager;
+    private final Cache cache;
+
+
+    public StudentServiceImpl(StudentRepository studentRepository, CacheManager cacheManager) {
+        this.studentRepository = studentRepository;
+        this.cacheManager = cacheManager;
+        this.cache = cacheManager.getCache("students");
+    }
 
     @Override
     public Student create(StudentRequestDto dto) {
@@ -29,7 +36,7 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public Student findById(Long id) throws InterruptedException {
 
-        Student cashedStudent = studentCache.get(id);
+        Student cashedStudent = cache.get(id);
         if (cashedStudent != null) {
             return cashedStudent;
         }
@@ -39,7 +46,7 @@ public class StudentServiceImpl implements StudentService{
 
         TimeUnit.SECONDS.sleep(2);
 
-        studentCache.put(id, student);
+        cache.put(id, student);
 
         return student;
     }
@@ -47,18 +54,18 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public void delete(Long id) {
         studentRepository.deleteById(id);
-        studentCache.remove(id);
+        cache.remove(id);
     }
 
     @Override
     public void update(StudentUpdateDto dto) {
 
-        Student cashedStudent = studentCache.get(dto.getId());
+        Student cashedStudent = cache.get(dto.getId());
         if (cashedStudent != null) {
             cashedStudent.setName(dto.getName());
             cashedStudent.setAge(dto.getAge());
             studentRepository.save(cashedStudent);
-            studentCache.put(cashedStudent.getId(), cashedStudent);
+            cache.put(cashedStudent.getId(), cashedStudent);
         }
 
         Student student = studentRepository.findById(dto.getId())
