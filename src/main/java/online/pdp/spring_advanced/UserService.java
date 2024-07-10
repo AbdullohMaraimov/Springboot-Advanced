@@ -2,37 +2,12 @@ package online.pdp.spring_advanced;
 
 import lombok.NonNull;
 
-import java.util.Optional;
+public interface UserService {
 
-public class UserService {
+    User create(@NonNull User user);
 
-    private final UserRepository userRepository;
+    User get(@NonNull Integer id);
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-
-    public User createUser(@NonNull User user) {
-
-        Optional<User> userOptional = userRepository.findByEmail(user.getEmail());
-
-        if (userOptional.isPresent()) {
-            throw new RuntimeException("Email already taken: " + user.getEmail());
-        }
-
-        userOptional = userRepository.findByUsername(user.getUsername());
-
-        if (userOptional.isPresent()) {
-            throw new RuntimeException("Username already exists: " + user.getUsername());
-        }
-
-        return userRepository.save(user);
-    }
-
-    public User get(Integer id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found => " + id));
-    }
+    void delete(Integer id);
 
 }
