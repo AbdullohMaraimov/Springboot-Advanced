@@ -1,29 +1,46 @@
-type Query{
-    getPost(id : ID!) : Post
-    getPosts : [Post]
+type Query {
+    user(id: Int!): User
+    users: [User]
+    todosByLevel(level: Level!): [Todo]
+    todosByCategory(category: Category!): [Todo]
+    todosByDeadLine(deadLine: String!): [Todo]
 }
 
-type Mutation{
-    createPost(title : String!, body : String, userId : Int!) : Post
-    updatePost(id: Int! title : String!, body : String, rating : String) : Post
+type Mutation {
+    createUser(fullName: String!, email: String!, password: String!): User
+    createTodo(userId: Int!, title: String!, description: String, category: Category, level: Level, deadLine: String): Todo
+    completeTodo(id: Int!): Todo
+    deleteTodo(id: Int!): Boolean
+    updateTodo(id: Int!, title: String, description: String, category: Category, level: Level, deadLine: String, completed: Boolean): Todo
 }
 
-type Post {
-    id : ID!
-    title : String!
-    body : String
-    rating : Rating
-    user : User
+type User {
+    id: Int
+    fullName: String
+    email: String
+    password: String
+    todos: [Todo]
 }
 
-type User{
-    id : ID!
-    firstName : String
-    lastName : String
-    posts: [Post]
+type Todo {
+    id: Int
+    title: String
+    description: String
+    category: Category
+    level: Level
+    deadLine: String
+    completed: Boolean
+    user: User
 }
 
-type Rating{
-    star : String
-    rate : String
+enum Category {
+    ENTERTAINMENT
+    STUDY
+    WORK
+}
+
+enum Level {
+    LOW
+    MEDIUM
+    HIGH
 }
